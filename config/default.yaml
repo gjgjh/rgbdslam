@@ -1,0 +1,29 @@
+%YAML:1.0
+
+# point cloud filter
+# visualizing resolution unit: m
+voxel_grid: 0.05
+# valid point cloud distance, unit: m
+max_dist_pointcloud: 4.0
+
+# keyframe
+# minimum number of inliers when considering the matching is good
+min_inliers: 10
+# maximum norm
+max_norm: 1
+# minimum norm
+keyframe_threshold: 0.1
+
+# max number of lost frames when defining vo state as LOST
+max_num_lost: 30
+
+# Loop closure
+check_loop_closure: true
+nearby_loops: 3
+random_loops: 3
+
+# frames between each optimization
+optimization_interval: 30
+
+# rviz fix frame name
+frameID: map

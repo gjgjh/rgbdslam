@@ -1,0 +1,10 @@
+<launch>
+	<node
+	 name="rgbdslam_node" pkg="rgbdslam" type="run_vo" args="$(find rgbdslam)/config/default.yaml $(find rgbdslam)/result"
+	 output="screen"
+		/>
+		
+	<node
+		name="rviz" pkg="rviz" type="rviz" args="--display-config=$(find rgbdslam)/config/visualize.rviz" output="log"
+		/>
+</launch>
