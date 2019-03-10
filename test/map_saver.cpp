@@ -17,16 +17,15 @@
 
 ros::Subscriber map_sub;
 ros::Subscriber path_sub;
-string outputpath;
 void mapcb(const PointCloud::Ptr& msg);
 void pathcb(const nav_msgs::PathConstPtr& msg);
 int main(int argc,char** argv)
 {
-    // load config file
-    outputpath=string(argv[1]);
+    rgbdslam::output_path=string(argv[1]);
+
     ros::init(argc, argv, "map_saver_node");
     ros::NodeHandle nh2;
-    rgbdslam::registerNodeHandle(nh2,outputpath);
+    rgbdslam::registerNodeHandle(nh2);
     map_sub=nh2.subscribe("/rgbdslam/Map", 1000,mapcb);
     path_sub=nh2.subscribe("/rgbdslam/Path",1000,pathcb);
 
@@ -37,7 +36,7 @@ int main(int argc,char** argv)
 
 void mapcb(const PointCloud::Ptr& msg){
     PointCloud::Ptr globalMap=msg;
-    pcl::io::savePCDFileASCII (outputpath+"/globalMap.pcd", *globalMap);
+    pcl::io::savePCDFileASCII (rgbdslam::output_path+"/globalMap.pcd", *globalMap);
 
     ROS_INFO("============================================");
     ROS_INFO("Saved global map to result/globalMap.pcd");
@@ -47,7 +46,7 @@ void mapcb(const PointCloud::Ptr& msg){
 }
 
 void pathcb(const nav_msgs::PathConstPtr& msg){
-    ofstream fout((outputpath+"/CameraPoses.txt").c_str());
+    ofstream fout((rgbdslam::output_path+"/CameraPoses.txt").c_str());
 
     for(auto& p:msg->poses){
         fout <<to_string(p.header.stamp.toSec())

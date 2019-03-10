@@ -82,4 +82,9 @@ void Frame::image2PointCloud()const
     localMap_->is_dense = false;
 }
 
+void Frame::computeKptAndDesp(){
+    cv::Ptr<cv::ORB> orb=cv::ORB::create();
+    orb->detectAndCompute(color_,cv::Mat(),kp_,desp_);
+}
+
 }

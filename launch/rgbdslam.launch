@@ -1,6 +1,6 @@
 <launch>
 	<node
-	 name="rgbdslam_node" pkg="rgbdslam" type="run_vo" args="$(find rgbdslam)/config/default.yaml $(find rgbdslam)/result"
+	 name="rgbdslam_node" pkg="rgbdslam" type="run_vo" args="$(find rgbdslam)/config/default.yaml $(find rgbdslam)/result $(find rgbdslam)/vocab/orbvoc.dbow3"
 	 output="screen"
 		/>
 		

@@ -20,17 +20,14 @@ ros::Publisher campose_pub;
 ros::Publisher color_pub;
 ros::Publisher depth_pub;
 ros::Publisher map_pub;
-string outputpath_;
 
-void registerNodeHandle(ros::NodeHandle &nh,string outputpath)
+void registerNodeHandle(ros::NodeHandle &nh)
 {
 path_pub=nh.advertise<nav_msgs::Path>("/rgbdslam/Path", 1000, true); // latch=true
 campose_pub=nh.advertise<geometry_msgs::PoseStamped>("/rgbdslam/CamPose", 1000);
 color_pub=nh.advertise<sensor_msgs::Image>("/rgbdslam/color", 1000);
 depth_pub=nh.advertise<sensor_msgs::Image>("/rgbdslam/depth", 1000);
 map_pub=nh.advertise<PointCloud>("/rgbdslam/Map", 1000, true);
-
-outputpath_=outputpath;
 }
 
 void pubPath(const Isometry3d& pose,const double& timestamp)

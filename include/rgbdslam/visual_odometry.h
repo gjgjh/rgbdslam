@@ -11,8 +11,10 @@
 
 #ifndef VISUAL_ODOMETRY_H
 #define VISUAL_ODOMETRY_H
+
 #include "rgbdslam/common_include.h"
 #include "rgbdslam/map.h"
+#include "rgbdslam/looper.h"
 
 namespace rgbdslam
 {
@@ -33,7 +35,6 @@ private:
     Frame::Ptr ref_;                        // reference key frame
     Frame::Ptr curr_;                       // current frame
 
-    cv::Ptr<cv::ORB> orb_;                  // orb detector and computer
     vector<cv::DMatch> feature_matches_;    // feature matches
 
     Isometry3d T_c_r_estimated_;            // the estimated pose of current frame
@@ -44,24 +45,23 @@ private:
     int max_num_lost_;                      // max number of continuous lost times
     int min_inliers_;                       // minimum inliers
 
-    double max_norm_;                       // max norm of two key-frames
-    double keyframe_threshold_;             // minimal norm of two key-frames
+    double max_norm_;                       // maximum norm of two key-frames
+    double keyframe_threshold_;             // minimum norm of two key-frames
 
     bool check_loop_closure_;               // whether check loop closure or not
     bool isLoops_;                          // whether ref_ and curr_ are loop closure
+    Looper::Ptr looper_;                    // loop closure
 
     // inner operation
-    void computeKptAndDesp();
     void featureMatching();
     void poseEstimationPnP();
 
-    void addKeyFrame();
+    double normofT(Isometry3d& T);
     bool checkEstimatedPose();
     bool checkKeyFrame();
-    double normofT(Isometry3d& T);
-
-    void checkNearbyLoops();
-    void checkRandomLoops();
+    void addKeyFrame();
+    
+    void checkLoops();
 };
 
 }

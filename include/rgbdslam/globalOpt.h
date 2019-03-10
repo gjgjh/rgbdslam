@@ -11,6 +11,7 @@
 
 #ifndef GLOBALOPT_H
 #define GLOBALOPT_H
+
 #include "rgbdslam/common_include.h"
 
 namespace rgbdslam

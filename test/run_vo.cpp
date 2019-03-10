@@ -29,12 +29,14 @@ int numFrames=0;
 
 void callback(const ImageConstPtr &msg1, const ImageConstPtr &msg2);
 void caminfocb(const sensor_msgs::CameraInfo::ConstPtr &msg);
-
 int main(int argc, char** argv)
 {
+    rgbdslam::config_path=argv[1];
+    rgbdslam::output_path=argv[2];
+    rgbdslam::vocab_path=argv[3];
+
     // load config file
-    rgbdslam::Config::getConfig()->setParameterFile(argv[1]);
-    string outputpath=string(argv[2]);
+    rgbdslam::Config::getConfig()->setParameterFile(rgbdslam::config_path);
 
     rgbdslam::VisualOdometry::Ptr vo_tmp(new rgbdslam::VisualOdometry);
     vo=vo_tmp;
@@ -47,10 +49,9 @@ int main(int argc, char** argv)
     ROS_INFO("Starting...");
     ROS_INFO("================================================");
     ros::NodeHandle nh;
-    rgbdslam::registerNodeHandle(nh,outputpath);
+    rgbdslam::registerNodeHandle(nh);
 
-    // time synchronize
-    // http://wiki.ros.org/message_filters#Time_Synchronizer
+    // time synchronize. see: http://wiki.ros.org/message_filters#Time_Synchronizer
     Subscriber<Image> color_sub(nh, "/camera/rgb/image_color", 1000,ros::TransportHints().tcpNoDelay());
     Subscriber<Image> depth_sub(nh, "/camera/depth/image", 1000,ros::TransportHints().tcpNoDelay());
     caminfo_sub = nh.subscribe("/camera/rgb/camera_info", 1000,caminfocb);

@@ -11,8 +11,11 @@
 
 #ifndef FRAME_H
 #define FRAME_H
+
 #include "rgbdslam/common_include.h"
 #include "rgbdslam/camera.h"
+
+#include <DBoW3/DBoW3.h>
 
 namespace rgbdslam
 {
@@ -38,9 +41,12 @@ public:
     cv::Mat& depth(){return depth_;}
     Camera::Ptr& camera(){return camera_;}
     Isometry3d& T_c_w(){return T_c_w_;}
-    cv::Mat& desp(){return desp_;}
-    vector<cv::KeyPoint>& kp(){return kp_;}
+    const cv::Mat& desp()const{return desp_;}
+    const vector<cv::KeyPoint>& kp()const{return kp_;}
+    DBoW3::BowVector& bow_vec(){ return bow_vec_;}
+
     void image2PointCloud()const;
+    void computeKptAndDesp();
 
 private:
     unsigned long id_;          // id of this frame
@@ -52,7 +58,7 @@ private:
     cv::Mat color_,depth_;      // color and depth image
     cv::Mat desp_;              // descriptors
     vector<cv::KeyPoint> kp_;   // orb keypoints
-
+    DBoW3::BowVector bow_vec_;  // BoW vector
 };
 }
 

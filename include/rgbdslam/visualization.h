@@ -22,7 +22,7 @@ extern ros::Publisher depth_pub;
 extern ros::Publisher map_pub;
 extern string outputpath_;
 
-void registerNodeHandle(ros::NodeHandle &nh,string outputpath);
+void registerNodeHandle(ros::NodeHandle &nh);
 void pubPath(const Isometry3d& pose,const double& timestamp);
 void pubColorImg(const cv::Mat& color);
 void pubDepthImg(const cv::Mat& depth);

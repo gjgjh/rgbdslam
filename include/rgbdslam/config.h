@@ -28,10 +28,10 @@ public:
         return T(file_[key]);
     }
 private:
-    cv::FileStorage file_;
-
     Config(){}
+
+    cv::FileStorage file_;
 };
 }
 
-#endif
+#endif // CONFIG_H

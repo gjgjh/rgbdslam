@@ -19,8 +19,8 @@ max_num_lost: 30
 
 # Loop closure
 check_loop_closure: true
-nearby_loops: 3
-random_loops: 3
+min_sim_score: 0.015
+min_interval: 10
 
 # frames between each optimization
 optimization_interval: 30

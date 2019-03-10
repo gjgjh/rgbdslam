@@ -11,6 +11,8 @@ Ubuntu 64-bit 16.04. ROS Kinetic. [ROS Installation](http://wiki.ros.org/ROS/Ins
 
 G2O. A modified version of g2o is in Thirdparty directory, compile and install it in your computer.
 
+[DBoW3](https://github.com/rmsalinas/DBow3). A famous package for loop closure. And a large binary ORB vocabulary file can be found in vocab directory.
+
 # 1. Installation
 
 Create your **catkin** workspace:
@@ -58,7 +60,7 @@ You will see two windows showing the current rgb and depth frame, and another wi
 roslaunch rgbdslam map_saver.launch
 ```
 
-You can use pcl_viewer to view this map. After all data is done and your map is saved, you can press ctrl+C to stop these nodes. Some other results like trajectories (in .txt format) are also saved in the result directory. If you want to evaluate the SLAM results, there are some tools in the /scripts directory for the benchmark. The use is like:
+You can use pcl_viewer to view this map. After all data is done and your map is saved, you can press ctrl+C to stop these nodes. Some other results like trajectories (in .txt format) are also saved in the result directory. If you want to evaluate the SLAM results, there are some tools in the /scripts directory for the benchmark. For example, you can use it by typing (ground truth file can be found on TUM website):
 
 ```bash
 python2 scripts/evaluate_ate.py scripts/rgbd_dataset_freiburg1_desk-groundtruth.txt result/CameraPoses.txt --plot figure.png --offset 0 --scale 1 --verbose

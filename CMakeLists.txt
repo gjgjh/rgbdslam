@@ -37,6 +37,10 @@ find_package(catkin REQUIRED COMPONENTS
         )
 include_directories(${catkin_INCLUDE_DIRS})
 
+# DBoW3
+find_package(DBoW3 REQUIRED)
+include_directories(${DBoW3_LIB_DIR})
+
 set(THIRD_PARTY_LIBS
         ${OpenCV_LIBS}
         ${PCL_LIBRARIES}
@@ -45,6 +49,7 @@ set(THIRD_PARTY_LIBS
         ${CSPARSE_LIBRARY}
         g2o_types_slam3d
         ${catkin_LIBRARIES}
+        ${DBoW3_LIBS}
         )
 
 ############### source and test ######################

@@ -19,7 +19,8 @@ namespace rgbdslam
 GlobalOptimization globalEstimator;
 
 VisualOdometry::VisualOdometry():
-state_(INITIALIZING),ref_(nullptr),curr_(nullptr),map_(new Map),num_lost_(0),num_inliers_(0)
+state_(INITIALIZING),ref_(nullptr),curr_(nullptr),map_(new Map),
+num_lost_(0),num_inliers_(0),looper_(new Looper)
 {
     max_num_lost_=Config::getConfig()->get<int>("max_num_lost");
     min_inliers_=Config::getConfig()->get<int>("min_inliers");
@@ -27,7 +28,6 @@ state_(INITIALIZING),ref_(nullptr),curr_(nullptr),map_(new Map),num_lost_(0),num
     keyframe_threshold_=Config::getConfig()->get<double>("keyframe_threshold");
     check_loop_closure_=Config::getConfig()->get<string>("check_loop_closure")=="true";
     isLoops_=false;
-    orb_=cv::ORB::create();
 }
 
 VisualOdometry::~VisualOdometry()
@@ -45,7 +45,8 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
             curr_=ref_=frame;
             map_->insertKeyFrame(frame);
             // extract features from first frame
-            computeKptAndDesp();
+            curr_->computeKptAndDesp();
+            looper_->calBowVec(curr_);
 
             auto* v=new g2o::VertexSE3;
             v->setId(curr_->id());
@@ -62,7 +63,8 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
         case OK:
         {
             curr_=frame;
-            computeKptAndDesp();
+            curr_->computeKptAndDesp();
+            looper_->calBowVec(curr_);
             featureMatching();
             poseEstimationPnP();
             if(checkEstimatedPose()==true) // a good estimation
@@ -79,10 +81,7 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
                 if(checkKeyFrame()== true) // is a keyframe
                 {
                     if(check_loop_closure_)
-                    {
-                        checkNearbyLoops();
-                        checkRandomLoops();
-                    }
+                        checkLoops();
                     ref_=curr_;
                     addKeyFrame();
                     rgbdslam::pubMap(map_->globalMap());
@@ -104,11 +103,6 @@ bool VisualOdometry::addFrame(Frame::Ptr frame)
         }
     }
     return true;
-}
-
-void VisualOdometry::computeKptAndDesp()
-{
-    orb_->detectAndCompute(curr_->color(),cv::Mat(),curr_->kp(),curr_->desp());
 }
 
 void VisualOdometry::featureMatching()
@@ -264,64 +258,18 @@ double VisualOdometry::normofT(Isometry3d& T)
     return fabs(min(rNorm, 2 * M_PI - rNorm)) + fabs(tNorm);
 }
 
-void VisualOdometry::checkNearbyLoops()
+void VisualOdometry::checkLoops()
 {
-    static int nearby_loops=Config::getConfig()->get<int>("nearby_loops");
-
     isLoops_=true;
+    auto loops=looper_->getPossibleLoops(curr_,map_);
+    for(auto& kf:loops){
+        ref_=kf;
+        featureMatching();
+        poseEstimationPnP();
+        if(checkEstimatedPose()==true)
+            checkKeyFrame();
 
-    if(map_->keyframes().size()<=nearby_loops)
-    {
-        for(auto kf:map_->keyframes())
-        {
-            ref_=kf;
-            featureMatching();
-            poseEstimationPnP();
-            if(checkEstimatedPose()==true)
-                checkKeyFrame();
-
-        }
-    }else{
-        for(int i=map_->keyframes().size()-nearby_loops;i<map_->keyframes().size();i++)
-        {
-            ref_=map_->keyframes()[i];
-            featureMatching();
-            poseEstimationPnP();
-            if(checkEstimatedPose()==true)
-                checkKeyFrame();
-        }
-    }
-
-    isLoops_= false;
-}
-
-void VisualOdometry::checkRandomLoops()
-{
-    srand((unsigned int)time(NULL));
-    static int random_loops=Config::getConfig()->get<int>("random_loops");
-
-    isLoops_=true;
-
-    if(map_->keyframes().size()<=random_loops)
-    {
-        for(auto& kf:map_->keyframes())
-        {
-            ref_=kf;
-            featureMatching();
-            poseEstimationPnP();
-            if(checkEstimatedPose()==true)
-                checkKeyFrame();
-        }
-    }else{
-        for(int i=0;i<random_loops;i++)
-        {
-            int index=rand()%map_->keyframes().size();
-            ref_=map_->keyframes()[index];
-            featureMatching();
-            poseEstimationPnP();
-            if(checkEstimatedPose()==true)
-                checkKeyFrame();
-        }
+        cout<<"Loops: "<<ref_->id()<<" - "<<curr_->id()<<endl;
     }
 
     isLoops_= false;
@@ -330,12 +278,12 @@ void VisualOdometry::checkRandomLoops()
 void VisualOdometry::optimizeMap()
 {
     // pose graph optimization
-    globalEstimator.saveOptResult(outputpath_+"/G2oBefore.g2o");
+    globalEstimator.saveOptResult(rgbdslam::output_path+"/G2oBefore.g2o");
     globalEstimator.optimize();
-    globalEstimator.saveOptResult(outputpath_+"/G2oAfter.g2o");
+    globalEstimator.saveOptResult(rgbdslam::output_path+"/G2oAfter.g2o");
 
     // update key frame poses
-    ofstream fout((outputpath_+"/KeyframePosesAfterG2o.txt").c_str());
+    ofstream fout((rgbdslam::output_path+"/KeyframePosesAfterG2o.txt").c_str());
     for(auto& kf:map_->keyframes())
     {
         auto* vertex= dynamic_cast<g2o::VertexSE3*>

@@ -79,4 +79,12 @@ typedef pcl::PointCloud<PointT> PointCloud;
 #include <ros/subscriber.h>
 #include <sensor_msgs/CameraInfo.h>
 
+// global variable
+namespace rgbdslam
+{
+extern string config_path;
+extern string output_path;
+extern string vocab_path;
+}
+
 #endif // COMMON_INCLUDE_H
