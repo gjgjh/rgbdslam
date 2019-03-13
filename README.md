@@ -4,6 +4,7 @@ This program is a simple RGBD-SLAM demo. It uses RGBD images (such as Kinect ima
 
 This SLAM program uses PnP algorithm in tracking (front end) and global Pose graph optimization in the back end. This program supports ROS (Robot Operating System) and can visualize the result (such as trajectories and dense point cloud map) in rviz. Here is a demo [video](https://www.youtube.com/watch?v=7iH6wtQ6fdY) on youtube.
 
+<img src="https://github.com/gjgjh/rgbdslam-demo/blob/master/support_files/pointcloud.png" width = 50% height = 50% />
 
 # 0. Prerequisites
 
@@ -55,18 +56,21 @@ Download the rgbd dataset from TUM website: https://vision.in.tum.de/data/datase
 rosbag play YOUR_DATA_FOLDER/rgbd_dataset_freiburg1_desk.bag
 ```
 
-You will see two windows showing the current rgb and depth frame, and another window showing the 3D map and trajectories in real time. Before you shutdown the node, you can save the final 3D map (in .pcd format) by typing these in a new terminal:
+You will see two windows showing the current rgb and depth frame, and another window showing the 3D map and trajectories in real time. Before you shutdown the node, you can type these in a new terminal to save the final results:
+
 ```bash
 roslaunch rgbdslam map_saver.launch
 ```
 
-You can use pcl_viewer to view this map. After all data is done and your map is saved, you can press ctrl+C to stop these nodes. Some other results like trajectories (in .txt format) are also saved in the result directory. If you want to evaluate the SLAM results, there are some tools in the /scripts directory for the benchmark. For example, you can use it by typing (ground truth file can be found on TUM website):
+<img src="https://github.com/gjgjh/rgbdslam-demo/blob/master/support_files/octomap.png" width = 50% height = 50% />
+
+The optimized trjectories(.txt), 3D point cloud map(.pcd) and octomap(.ot).You can use pcl_viewer to view the point cloud map, and use octovis to view the octomap. After all data is done and your results are saved, you can press ctrl+C to stop these nodes. If you want to evaluate the SLAM results, there are some tools in the /scripts directory for the benchmark. For example, you can use it by typing (ground truth file can be found on TUM website):
 
 ```bash
 python2 scripts/evaluate_ate.py scripts/rgbd_dataset_freiburg1_desk-groundtruth.txt result/CameraPoses.txt --plot figure.png --offset 0 --scale 1 --verbose
 ```
 
-You can also use the [online evaluation](https://vision.in.tum.de/data/datasets/rgbd-dataset/online_evaluation) provided by TUM website. Don't worry if their coordiate systems don't match, the true and the estimated trajectory will be aligned beforing evaluating.
+You can also use the [online evaluation](https://vision.in.tum.de/data/datasets/rgbd-dataset/online_evaluation) provided by TUM website. Note that the error metric is independent of the coordinate system, since the true and the estimated trajectory will be aligned beforing evaluating.
 
 <img src="https://github.com/gjgjh/rgbdslam-demo/blob/master/support_files/figure.png" width = 50% height = 50% />
 

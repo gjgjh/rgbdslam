@@ -34,6 +34,8 @@ find_package(catkin REQUIRED COMPONENTS
         std_msgs
         cv_bridge
         message_filters
+        octomap_ros
+        octomap_msgs
         )
 include_directories(${catkin_INCLUDE_DIRS})
 

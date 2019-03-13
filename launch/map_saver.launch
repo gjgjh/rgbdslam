@@ -1,6 +1,6 @@
 <launch>
 	<node
-	 name="map_saver_node" pkg="rgbdslam" type="map_saver" args="$(find rgbdslam)/result"
+	 name="map_saver_node" pkg="rgbdslam" type="map_saver" args="$(find rgbdslam)/config/default.yaml $(find rgbdslam)/result"
 	 output="screen"
 		/>
 </launch>

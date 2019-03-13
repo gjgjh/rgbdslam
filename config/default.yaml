@@ -1,8 +1,8 @@
 %YAML:1.0
-
-# point cloud filter
+# point cloud and octomap filter
 # visualizing resolution unit: m
 voxel_grid: 0.05
+leaf_size: 0.05
 # valid point cloud distance, unit: m
 max_dist_pointcloud: 4.0
 
@@ -20,7 +20,7 @@ max_num_lost: 30
 # Loop closure
 check_loop_closure: true
 min_sim_score: 0.015
-min_interval: 10
+min_interval: 5
 
 # frames between each optimization
 optimization_interval: 30

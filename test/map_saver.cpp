@@ -10,18 +10,23 @@
  *******************************************************/
 
 #include <message_filters/subscriber.h>
+#include <octomap/ColorOcTree.h>
 
 #include "rgbdslam/visualization.h"
 #include "rgbdslam/common_include.h"
 #include "rgbdslam/config.h"
 
-ros::Subscriber map_sub;
 ros::Subscriber path_sub;
+ros::Subscriber map_sub;
 void mapcb(const PointCloud::Ptr& msg);
 void pathcb(const nav_msgs::PathConstPtr& msg);
 int main(int argc,char** argv)
 {
-    rgbdslam::output_path=string(argv[1]);
+    rgbdslam::config_path=argv[1];
+    rgbdslam::output_path=argv[2];
+
+    // load config file
+    rgbdslam::Config::getConfig()->setParameterFile(rgbdslam::config_path);
 
     ros::init(argc, argv, "map_saver_node");
     ros::NodeHandle nh2;
@@ -38,10 +43,25 @@ void mapcb(const PointCloud::Ptr& msg){
     PointCloud::Ptr globalMap=msg;
     pcl::io::savePCDFileASCII (rgbdslam::output_path+"/globalMap.pcd", *globalMap);
 
-    ROS_INFO("============================================");
+    ROS_INFO("--------------------------------------------");
     ROS_INFO("Saved global map to result/globalMap.pcd");
     ROS_INFO("Done!");
-    ROS_INFO("============================================");
+    ROS_INFO("--------------------------------------------");
+
+    double leafsize=rgbdslam::Config::getConfig()->get<double>("leaf_size");
+    octomap::ColorOcTree octree(leafsize);
+    for(auto& p:globalMap->points){
+        octree.updateNode(octomap::point3d(p.x, p.y, p.z), true);
+        octree.integrateNodeColor( p.x, p.y, p.z, p.r, p.g, p.b );
+    }
+
+    octree.updateInnerOccupancy();
+    octree.write(rgbdslam::output_path+"/globalOctomap.ot");
+
+    ROS_INFO("--------------------------------------------");
+    ROS_INFO("Saved global Octomap to result/globalOctomap.ot");
+    ROS_INFO("Done!");
+    ROS_INFO("--------------------------------------------");
     map_sub.shutdown();
 }
 
@@ -60,10 +80,10 @@ void pathcb(const nav_msgs::PathConstPtr& msg){
         <<endl;
     }
 
-    ROS_INFO("============================================");
+    ROS_INFO("--------------------------------------------");
     ROS_INFO("Saved trajectories to result/CameraPoses.txt");
     ROS_INFO("Done!");
-    ROS_INFO("============================================");
+    ROS_INFO("--------------------------------------------");
     fout.close();
     path_sub.shutdown();
 }
