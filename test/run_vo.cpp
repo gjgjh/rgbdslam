@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     rgbdslam::vocab_path=argv[3];
 
     // load config file
-    rgbdslam::Config::getConfig()->setParameterFile(rgbdslam::config_path);
+    rgbdslam::Config::instance()->setParameterFile(rgbdslam::config_path);
 
     rgbdslam::VisualOdometry::Ptr vo_tmp(new rgbdslam::VisualOdometry);
     vo=vo_tmp;
@@ -100,7 +100,7 @@ void callback(const ImageConstPtr &msg1, const ImageConstPtr &msg2)
 
     vo->addFrame(pFrame);
 
-    static int optInterval=rgbdslam::Config::getConfig()->get<int>("optimization_interval");
+    static int optInterval=rgbdslam::Config::instance()->get<int>("optimization_interval");
     numFrames++;
     if(numFrames%optInterval==0)
         vo->optimizeMap();

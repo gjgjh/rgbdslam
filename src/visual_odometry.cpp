@@ -22,11 +22,11 @@ VisualOdometry::VisualOdometry():
 state_(INITIALIZING),ref_(nullptr),curr_(nullptr),map_(new Map),
 num_lost_(0),num_inliers_(0),looper_(new Looper)
 {
-    max_num_lost_=Config::getConfig()->get<int>("max_num_lost");
-    min_inliers_=Config::getConfig()->get<int>("min_inliers");
-    max_norm_=Config::getConfig()->get<double>("max_norm");
-    keyframe_threshold_=Config::getConfig()->get<double>("keyframe_threshold");
-    check_loop_closure_=Config::getConfig()->get<string>("check_loop_closure")=="true";
+    max_num_lost_=Config::instance()->get<int>("max_num_lost");
+    min_inliers_=Config::instance()->get<int>("min_inliers");
+    max_norm_=Config::instance()->get<double>("max_norm");
+    keyframe_threshold_=Config::instance()->get<double>("keyframe_threshold");
+    check_loop_closure_=Config::instance()->get<string>("check_loop_closure")=="true";
     isLoops_=false;
 }
 
@@ -283,16 +283,13 @@ void VisualOdometry::optimizeMap()
     globalEstimator.saveOptResult(rgbdslam::output_path+"/G2oAfter.g2o");
 
     // update key frame poses
-    ofstream fout((rgbdslam::output_path+"/KeyframePosesAfterG2o.txt").c_str());
     for(auto& kf:map_->keyframes())
     {
         auto* vertex= dynamic_cast<g2o::VertexSE3*>
-                (globalEstimator.optimizer_.vertices()[kf->id()]);
+                (globalEstimator.optimizer_.vertices()[kf.first]);
         Isometry3d pose=vertex->estimate();
-        fout<<"Frame ID "<<kf->id()<<" : "<<endl<<pose.inverse().matrix()<<endl<<endl;
-        kf->T_c_w()=pose.inverse();
+        kf.second->T_c_w()=pose.inverse();
     }
-    fout.close();
 
     // update point cloud map
     map_->updateMap();

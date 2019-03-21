@@ -21,7 +21,7 @@ public:
     Config(const Config&)= delete;
     Config& operator=(const Config&)= delete;
 
-    static std::shared_ptr<Config> getConfig();
+    static std::shared_ptr<Config> instance();
     void setParameterFile(const std::string &filename);
     template<typename T>
     T get(const std::string &key)const{

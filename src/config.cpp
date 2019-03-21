@@ -13,7 +13,7 @@
 
 namespace rgbdslam
 {
-    std::shared_ptr<Config> Config::getConfig(){
+    std::shared_ptr<Config> Config::instance(){
         static std::shared_ptr<Config> config_= nullptr;
         if (config_ == nullptr)
             config_ = std::shared_ptr<Config>(new Config);

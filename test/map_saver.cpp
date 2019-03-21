@@ -26,7 +26,7 @@ int main(int argc,char** argv)
     rgbdslam::output_path=argv[2];
 
     // load config file
-    rgbdslam::Config::getConfig()->setParameterFile(rgbdslam::config_path);
+    rgbdslam::Config::instance()->setParameterFile(rgbdslam::config_path);
 
     ros::init(argc, argv, "map_saver_node");
     ros::NodeHandle nh2;
@@ -48,7 +48,7 @@ void mapcb(const PointCloud::Ptr& msg){
     ROS_INFO("Done!");
     ROS_INFO("--------------------------------------------");
 
-    double leafsize=rgbdslam::Config::getConfig()->get<double>("leaf_size");
+    double leafsize=rgbdslam::Config::instance()->get<double>("leaf_size");
     octomap::ColorOcTree octree(leafsize);
     for(auto& p:globalMap->points){
         octree.updateNode(octomap::point3d(p.x, p.y, p.z), true);

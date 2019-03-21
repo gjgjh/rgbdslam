@@ -68,8 +68,8 @@ void Frame::image2PointCloud()const
     }
 
     // voxel filter
-    double gridsize=Config::getConfig()->get<double>("voxel_grid");
-    double max_dist_pointcloud=Config::getConfig()->get<double>("max_dist_pointcloud");
+    double gridsize=Config::instance()->get<double>("voxel_grid");
+    double max_dist_pointcloud=Config::instance()->get<double>("max_dist_pointcloud");
     voxel.setLeafSize(gridsize, gridsize, gridsize);
     pass.setFilterFieldName("z");
     pass.setFilterLimits(0.0, max_dist_pointcloud);

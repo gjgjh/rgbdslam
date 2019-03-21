@@ -27,10 +27,10 @@ public:
     void updateMap()const;
     void expandmap(Frame::Ptr frame)const;
     const PointCloud::Ptr& globalMap()const { return globalMap_;}
-    const vector<Frame::Ptr>& keyframes()const { return keyframes_;}
+    const unordered_map<unsigned long,Frame::Ptr>& keyframes()const { return keyframes_;}
 private:
     PointCloud::Ptr globalMap_;                                // all map point cloud
-    vector<Frame::Ptr> keyframes_;                             // all key frames
+    unordered_map<unsigned long,Frame::Ptr> keyframes_;                             // all key frames
 
 };
 }

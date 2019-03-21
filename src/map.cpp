@@ -26,7 +26,7 @@ Map::~Map()
 
 void Map::insertKeyFrame(Frame::Ptr frame)
 {
-    keyframes_.push_back(frame);
+    keyframes_.insert({frame->id(),frame});
     expandmap(frame);
 }
 
@@ -34,8 +34,8 @@ void Map::updateMap()const
 {
     globalMap_->clear();
 
-    for(int i=0;i<keyframes_.size();i++)
-        expandmap(keyframes_[i]);
+    for(auto& kf:keyframes_)
+        expandmap(kf.second);
 }
 
 void Map::expandmap(Frame::Ptr frame)const

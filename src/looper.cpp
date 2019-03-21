@@ -19,8 +19,8 @@ Looper::Looper(){
     if(vocab_.empty())
         cerr<<"Vocabulary does not exist\n";
 
-    min_sim_score_=Config::getConfig()->get<double>("min_sim_score");
-    min_interval_=Config::getConfig()->get<int>("min_interval");
+    min_sim_score_=Config::instance()->get<double>("min_sim_score");
+    min_interval_=Config::instance()->get<int>("min_interval");
 }
 
 void Looper::calBowVec(Frame::Ptr pFrame)const{
@@ -33,10 +33,10 @@ vector<Frame::Ptr> Looper::getPossibleLoops(const Frame::Ptr& pFrame,
     vector<Frame::Ptr> res;
     double score;
     for(auto& kf:pMap->keyframes()){
-        if(abs(pFrame->id()-kf->id())>min_interval_){
-            score=vocab_.score(kf->bow_vec(),pFrame->bow_vec());
+        if(abs(pFrame->id()-kf.first)>min_interval_){
+            score=vocab_.score(kf.second->bow_vec(),pFrame->bow_vec());
             if(score>min_sim_score_)
-                res.push_back(kf);
+                res.push_back(kf.second);
         }
     }
     return res;

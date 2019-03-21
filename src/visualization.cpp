@@ -33,7 +33,7 @@ map_pub=nh.advertise<PointCloud>("/rgbdslam/Map", 1000, true);
 void pubPath(const Isometry3d& pose,const double& timestamp)
 {
     geometry_msgs::PoseStamped poseSt;
-    string frame_id=Config::getConfig()->get<string>("frameID");
+    string frame_id=Config::instance()->get<string>("frameID");
     poseSt.header.frame_id = frame_id;
     ros::Time tmp;
     poseSt.header.stamp=tmp.fromSec(timestamp);
@@ -85,7 +85,7 @@ void pubDepthImg(const cv::Mat& depth)
 
 void pubMap(const PointCloud::Ptr& pCloud)
 {
-    string frame_id = Config::getConfig()->get<string>("frameID");
+    string frame_id = Config::instance()->get<string>("frameID");
     pCloud->header.frame_id = frame_id;
     pcl_conversions::toPCL(ros::Time::now(), pCloud->header.stamp);
 
