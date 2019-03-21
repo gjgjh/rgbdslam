@@ -30,7 +30,7 @@ public:
     const unordered_map<unsigned long,Frame::Ptr>& keyframes()const { return keyframes_;}
 private:
     PointCloud::Ptr globalMap_;                                // all map point cloud
-    unordered_map<unsigned long,Frame::Ptr> keyframes_;                             // all key frames
+    unordered_map<unsigned long,Frame::Ptr> keyframes_;        // all key frames
 
 };
 }
