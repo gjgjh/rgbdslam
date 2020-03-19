@@ -14,7 +14,7 @@
 
 namespace rgbdslam
 {
-nav_msgs::Path path; // define global variable in the implementation file
+nav_msgs::Path path; // some global variables
 ros::Publisher path_pub;
 ros::Publisher campose_pub;
 ros::Publisher color_pub;
@@ -23,11 +23,11 @@ ros::Publisher map_pub;
 
 void registerNodeHandle(ros::NodeHandle &nh)
 {
-path_pub=nh.advertise<nav_msgs::Path>("/rgbdslam/Path", 1000, true); // latch=true
-campose_pub=nh.advertise<geometry_msgs::PoseStamped>("/rgbdslam/CamPose", 1000);
-color_pub=nh.advertise<sensor_msgs::Image>("/rgbdslam/color", 1000);
-depth_pub=nh.advertise<sensor_msgs::Image>("/rgbdslam/depth", 1000);
-map_pub=nh.advertise<PointCloud>("/rgbdslam/Map", 1000, true);
+    path_pub=nh.advertise<nav_msgs::Path>("/rgbdslam/Path", 1000, true); // latch=true
+    campose_pub=nh.advertise<geometry_msgs::PoseStamped>("/rgbdslam/CamPose", 1000);
+    color_pub=nh.advertise<sensor_msgs::Image>("/rgbdslam/color", 1000);
+    depth_pub=nh.advertise<sensor_msgs::Image>("/rgbdslam/depth", 1000);
+    map_pub=nh.advertise<PointCloud>("/rgbdslam/Map", 1000, true);
 }
 
 void pubPath(const Isometry3d& pose,const double& timestamp)
