@@ -11,33 +11,28 @@
 
 #include "rgbdslam/config.h"
 
-namespace rgbdslam
-{
-    std::shared_ptr<Config> Config::instance(){
-        static std::shared_ptr<Config> config_= nullptr;
-        if (config_ == nullptr)
-            config_ = std::shared_ptr<Config>(new Config);
+namespace rgbdslam {
 
-        return config_;
+std::shared_ptr<Config> Config::instance() {
+    static std::shared_ptr<Config> config_ = nullptr;
+    if (config_ == nullptr)
+        config_ = std::shared_ptr<Config>(new Config);
+
+    return config_;
+}
+
+void Config::setParameterFile(const std::string &filename) {
+    file_ = new cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
+    if (!file_->isOpened()) {
+        cerr << "parameter file " << filename << " doesn't exist.\n";
+        file_->release();
     }
+}
 
-    void Config::setParameterFile(const std::string &filename) {
-        file_ = cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
-        if (!file_.isOpened()) {
-            cerr << "parameter file " << filename << " doesn't exist.\n";
-            file_.release();
-        }
-    }
-
-
-//    template<typename T>
-//    T Config::get(const std::string &key)const{
-//        return T(file_[key]);
-//    }
-
-    Config::~Config() {
-        if (file_.isOpened())
-            file_.release();
-    }
+Config::~Config() {
+    if (file_->isOpened())
+        file_->release();
+    delete file_;
+}
 
 }

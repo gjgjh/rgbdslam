@@ -14,24 +14,28 @@
 #include "rgbdslam/common_include.h"
 
 namespace rgbdslam {
+
 // a Singleton class
 class Config {
 public:
     ~Config();
-    Config(const Config&)= delete;
-    Config& operator=(const Config&)= delete;
+    Config(const Config &) = delete;
+    Config &operator=(const Config &) = delete;
 
     static std::shared_ptr<Config> instance();
     void setParameterFile(const std::string &filename);
-    template<typename T>
-    T get(const std::string &key)const{
-        return T(file_[key]);
-    }
-private:
-    Config(){}
 
-    cv::FileStorage file_;
+    template<typename T>
+    T get(const std::string &key) const {
+        return T(file_->operator[](key));
+    }
+
+private:
+    Config() {}
+
+    cv::FileStorage *file_;
 };
+
 }
 
 #endif // CONFIG_H
